@@ -8,7 +8,11 @@
 	</ul>
 </li>
 <?php 
-if($_SESSION['userid']) { ?>
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if(isset($_SESSION['userid']) && $_SESSION['userid']) { ?>
 	<li class="dropdown">
 		<button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Conectado: <?php echo $_SESSION['user']; ?>
 		<span class="caret"></span></button>
