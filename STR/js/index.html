@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Popup de venta</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Mostrar popup</button>
+        <button onclick="consumeApiInventario()">asd</button>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myModalLabel">Venta</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><button type="button" class="btn btn-primary" id="btn-select" onclick="validate()">Seleccionar</button></td>
+                                    <td>PHP 7</td>
+                                    <td>10</td>
+                                    <td>$100</td>
+                                </tr>
+                                <tr>
+                                    <td><button type="button" class="btn btn-primary" id="btn-select" onclick="validate()">Seleccionar</button></td>
+                                    <td>Python</td>
+                                    <td>10</td>
+                                    <td>$200</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512">
+                        <path
+                          d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
+                      </svg> Seleccionar</a>
+                                    </td>
+                                    <td>Vanilla JavaScript</td>
+                                    <td>12</td>
+                                    <td>$300</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Evento al pulsar el botón "Seleccionar"
+            $("#btn-select").on("click", function() {
+                // Obtener el índice de la fila seleccionada
+                const index = $("#myModal .table tr.selected").index();
+
+                // Enviar el índice de la fila al padre del popup
+                $(this).parent().parent().trigger("select", index);
+
+                // Cerrar el popup
+                $("#myModal").modal("hide");
+            });
+        });
+
+        async function obtenerDatosDeAPI() {
+            try {
+                const respuesta = await fetch('http://localhost:8080/ApisDevOps/Inventario/inventario/read');
+
+                if (!respuesta.ok) {
+                    throw new Error(`Error al obtener los datos. Código de estado: ${respuesta.status}`);
+                }
+
+                const datosJson = await respuesta.json();
+                return datosJson.Product;
+            } catch (error) {
+                console.error('Error en la solicitud:', error.message);
+                throw error;
+            }
+        }
+
+
+        // Ejemplo de uso
+        obtenerDatosDeAPI()
+            .then((datos) => {
+                console.log('Datos de la API:', datos);
+
+                const inventario = datos;
+                var product1;
+                var product = [];
+                // Imprimir el objeto
+                for (const key in inventario) {
+                    product1 = inventario[key];
+                    //console.log(`${product1.proname}`);
+                    product[key] = {
+                        id: product1.id,
+                        name: product1.proname,
+                        cantidad: product1.amount
+                    }
+                }
+                console.log(product);
+            })
+            .catch((error) => {
+                console.error('Error general:', error);
+            });
+    </script>
+
+</body>
+
+</html>
